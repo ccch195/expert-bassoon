@@ -99,7 +99,7 @@ function cacheElements() {
   const ids = [
     "homeButton", "adminButton", "startButton", "installButton", "jobGrid", "jobDetailContent",
     "checkinTitle", "checkinSubtitle", "nameTabButton", "qrTabButton", "namePanel", "qrPanel",
-    "nameForm", "childName", "quickNames", "qrVideo", "qrStatus", "startQrButton", "stopQrButton",
+    "nameForm", "childName", "quickNames", "qrVideo", "qrStatus", "startQrButton", "stopQrButton", "guestNumberForm", "guestNumber",
     "backToJobButton", "ticketCard", "ticketJobCode", "ticketJobName", "ticketName", "ticketNumber",
     "ticketGate", "ticketWaitMessage", "ticketJobButton", "ticketOtherJobButton", "completeMessage",
     "nextJobButton", "toast", "adminLoginDialog", "adminLoginForm", "adminPassword", "adminPanelDialog",
@@ -122,6 +122,7 @@ function bindEvents() {
   elements.quickNames.addEventListener("click", handleQuickNameClick);
   elements.startQrButton.addEventListener("click", startQrScanner);
   elements.stopQrButton.addEventListener("click", stopQrScanner);
+  elements.guestNumberForm.addEventListener("submit", handleGuestNumberSubmit);
   elements.backToJobButton.addEventListener("click", () => {
     stopQrScanner();
     showScreen("job-detail");
@@ -190,7 +191,7 @@ function renderJobGrid() {
   elements.jobGrid.innerHTML = Object.values(JOBS).map((job) => {
     const state = appState.jobs[job.id];
     return `
-      <button class="job-card" type="button" data-job-id="${job.id}" style="--job-color:${job.color};--job-light:${job.light};">
+      <button class="job-card job-${job.id}" type="button" data-job-id="${job.id}" style="--job-color:${job.color};--job-light:${job.light};">
         <div class="job-visual" aria-hidden="true">${job.icon}</div>
         <div class="job-info">
           <span class="job-code">GATE ${job.gate}</span>
@@ -237,7 +238,7 @@ function renderJobDetail() {
     : `<div class="empty-queue">지금은 기다리는 친구가 없어요 😊</div>`;
 
   elements.jobDetailContent.innerHTML = `
-    <article class="job-detail-card" style="--job-color:${job.color};--job-light:${job.light};">
+    <article class="job-detail-card job-${job.id}" style="--job-color:${job.color};--job-light:${job.light};">
       <div class="job-detail-hero">
         <div class="job-detail-visual" aria-hidden="true">${job.icon}</div>
         <div class="job-detail-copy">
@@ -420,7 +421,7 @@ async function startQrScanner() {
     await elements.qrVideo.play();
     elements.startQrButton.classList.add("hidden");
     elements.stopQrButton.classList.remove("hidden");
-    elements.qrStatus.textContent = "QR을 네모 안에 보여주세요.";
+    elements.qrStatus.textContent = "QR 카드를 네모 안에 천천히 보여주세요.";
     scanQrFrame();
   } catch (error) {
     console.error(error);
@@ -441,7 +442,7 @@ async function scanQrFrame() {
         issueTicket(parsedName, "qr");
         return;
       }
-      elements.qrStatus.textContent = "이름 정보가 없는 QR이에요.";
+      elements.qrStatus.textContent = "방문객 번호를 읽을 수 없는 QR이에요.";
     }
   } catch (error) {
     console.error("QR 스캔 오류", error);
@@ -452,15 +453,46 @@ async function scanQrFrame() {
 function parseQrName(rawValue) {
   const raw = String(rawValue || "").trim();
   if (!raw) return "";
+
+  const guestMatch = raw.match(/^(?:DZ-)?GUEST[-_ ]?(\d{1,3})$/i);
+  if (guestMatch) return formatGuestName(guestMatch[1]);
+
+  const numberOnlyMatch = raw.match(/^\d{1,3}$/);
+  if (numberOnlyMatch) return formatGuestName(numberOnlyMatch[0]);
+
   try {
     const parsed = JSON.parse(raw);
+    if (typeof parsed.guest === "number" || typeof parsed.guest === "string") {
+      return formatGuestName(parsed.guest);
+    }
     if (typeof parsed.name === "string") return normalizeName(parsed.name);
   } catch (_) {
-    const match = raw.match(/(?:name|이름)\s*[:=]\s*([^&\n]+)/i);
-    if (match) return normalizeName(decodeURIComponent(match[1]));
+    const guestParam = raw.match(/(?:guest|visitor|손님)\s*[:=]\s*(\d{1,3})/i);
+    if (guestParam) return formatGuestName(guestParam[1]);
+
+    const nameMatch = raw.match(/(?:name|이름)\s*[:=]\s*([^&\n]+)/i);
+    if (nameMatch) return normalizeName(decodeURIComponent(nameMatch[1]));
   }
+
   if (raw.length <= 10 && !/^https?:/i.test(raw)) return normalizeName(raw);
   return "";
+}
+
+function formatGuestName(value) {
+  const number = Number.parseInt(String(value), 10);
+  if (!Number.isInteger(number) || number < 1 || number > 999) return "";
+  return `손님 ${String(number).padStart(3, "0")}`;
+}
+
+function handleGuestNumberSubmit(event) {
+  event.preventDefault();
+  const guestName = formatGuestName(elements.guestNumber.value);
+  if (!guestName) {
+    showToast("1부터 999 사이의 방문객 번호를 입력해 주세요.");
+    return;
+  }
+  elements.guestNumber.value = "";
+  issueTicket(guestName, "guest-number");
 }
 
 function stopQrScanner() {
@@ -471,7 +503,7 @@ function stopQrScanner() {
   if (elements.qrVideo) elements.qrVideo.srcObject = null;
   if (elements.startQrButton) elements.startQrButton.classList.remove("hidden");
   if (elements.stopQrButton) elements.stopQrButton.classList.add("hidden");
-  if (elements.qrStatus) elements.qrStatus.textContent = "QR 카메라를 시작해 주세요.";
+  if (elements.qrStatus) elements.qrStatus.textContent = "방문객 QR 카드를 네모 안에 보여주세요.";
 }
 
 function openAdminLogin() {
@@ -611,7 +643,9 @@ function repeatCurrentCall(jobId) {
 }
 
 async function announceEntry(childName, jobName, number) {
-  const message = `${childName} 친구, 준비되었나요? ${jobName} 체험장으로 입장하세요.`;
+  const isGuest = /^손님\s+\d{3}$/.test(childName);
+  const spokenName = isGuest ? `${childName.replace("손님 ", "손님 ")}번` : `${childName} 친구`;
+  const message = `${spokenName}, 준비되었나요? ${jobName} 체험장으로 입장하세요.`;
   try {
     await playAirportChime();
   } catch (error) {

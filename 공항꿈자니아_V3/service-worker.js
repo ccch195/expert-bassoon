@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "airport-dreamzania-v3.0.0";
+const CACHE_NAME = "airport-dreamzania-v3.1.0";
 const APP_SHELL = [
   "./",
   "./index.html",

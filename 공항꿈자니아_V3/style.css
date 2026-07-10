@@ -1341,3 +1341,89 @@ body {
     grid-column: auto;
   }
 }
+
+
+
+/* V3.1 - 방문객 QR 체크인 */
+.job-nailArtist .job-info h3,
+.job-nailArtist .job-detail-copy h2 {
+  white-space: nowrap;
+  word-break: keep-all;
+  letter-spacing: -.07em;
+}
+
+.job-nailArtist .job-info h3 {
+  font-size: clamp(21px, 2.75vw, 32px);
+}
+
+.job-nailArtist .job-detail-copy h2 {
+  font-size: clamp(28px, 4vw, 42px);
+}
+
+.guest-number-form {
+  margin-top: 12px;
+  padding: 13px;
+  border: 2px dashed #c8e4f2;
+  border-radius: 18px;
+  background: #f7fcff;
+}
+
+.guest-number-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #476b80;
+  font-size: 13px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.guest-number-row {
+  display: grid;
+  grid-template-columns: auto minmax(90px, 130px) minmax(150px, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.guest-prefix {
+  color: #173f59;
+  font-size: 19px;
+  font-weight: 1000;
+}
+
+.guest-number-row input {
+  width: 100%;
+  min-height: 52px;
+  border: 3px solid #cfe8f4;
+  border-radius: 16px;
+  padding: 8px 10px;
+  color: #173f59;
+  background: white;
+  font-size: 23px;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.guest-number-row button {
+  min-height: 52px;
+  padding: 9px 14px;
+  font-size: 15px;
+}
+
+@media (max-width: 600px) {
+  .job-nailArtist .job-info h3 {
+    font-size: 19px;
+  }
+
+  .job-nailArtist .job-detail-copy h2 {
+    font-size: 27px;
+  }
+
+  .guest-number-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .guest-number-row button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

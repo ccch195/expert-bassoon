@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%2372c7f4'/%3E%3Ctext x='96' y='126' text-anchor='middle' font-size='104'%3E✈️%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
-  <title>공항 꿈자니아 V3</title>
+  <title>공항 꿈자니아 V3.1</title>
 </head>
 <body>
   <noscript>이 앱을 사용하려면 JavaScript를 켜주세요.</noscript>
@@ -102,10 +102,19 @@
             <div class="qr-box">
               <video id="qrVideo" playsinline muted></video>
               <div class="qr-frame" aria-hidden="true"></div>
-              <p id="qrStatus">QR 카메라를 시작해 주세요.</p>
+              <p id="qrStatus">방문객 QR 카드를 네모 안에 보여주세요.</p>
               <button id="startQrButton" class="primary-button" type="button">QR 카메라 시작</button>
               <button id="stopQrButton" class="secondary-button hidden" type="button">카메라 끄기</button>
             </div>
+
+            <form id="guestNumberForm" class="guest-number-form" autocomplete="off">
+              <label for="guestNumber">QR이 잘 안 찍힐 때 방문객 번호를 입력해요</label>
+              <div class="guest-number-row">
+                <span class="guest-prefix">손님</span>
+                <input id="guestNumber" name="guestNumber" type="number" inputmode="numeric" min="1" max="999" placeholder="001" />
+                <button class="secondary-button" type="submit">번호로 체크인</button>
+              </div>
+            </form>
           </div>
 
           <button id="backToJobButton" class="text-button" type="button">← 직업 화면으로 돌아가기</button>
