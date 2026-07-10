@@ -1,0 +1,30 @@
+{
+  "name": "공항 꿈자니아 (Airport DreamZania)",
+  "short_name": "꿈자니아",
+  "description": "어린이집 태블릿용 공항 컨셉 직업체험 대기 시스템",
+  "lang": "ko-KR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#dff5ff",
+  "theme_color": "#72c7f4",
+  "categories": [
+    "education",
+    "kids"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

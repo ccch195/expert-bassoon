@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#72c7f4" />
+  <meta name="description" content="열매1반 태블릿용 공항 꿈자니아 V3 직업체험 대기 시스템" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="공항 꿈자니아" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%2372c7f4'/%3E%3Ctext x='96' y='126' text-anchor='middle' font-size='104'%3E✈️%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+  <title>공항 꿈자니아 V3</title>
+</head>
+<body>
+  <noscript>이 앱을 사용하려면 JavaScript를 켜주세요.</noscript>
+
+  <div id="app" class="app-shell" aria-live="polite">
+    <div class="sky-background" aria-hidden="true">
+      <div class="cloud cloud-a"></div>
+      <div class="cloud cloud-b"></div>
+      <div class="cloud cloud-c"></div>
+      <div class="flying-plane">✈️</div>
+    </div>
+
+    <header class="topbar">
+      <button id="homeButton" class="icon-button hidden" type="button" aria-label="처음 화면으로">🏠</button>
+      <div class="topbar-title">
+        <span class="mini-plane">✈️</span>
+        <span>공항 꿈자니아</span>
+      </div>
+      <button id="adminButton" class="icon-button" type="button" aria-label="관리자 모드">⚙️</button>
+    </header>
+
+    <main id="screenContainer" class="screen-container">
+      <section id="welcomeScreen" class="screen active" data-screen="welcome">
+        <div class="welcome-card glass-card">
+          <div class="airport-badge">AIRPORT DREAMZANIA</div>
+          <div class="hero-logo" aria-hidden="true">✈️</div>
+          <h1>공항 꿈자니아</h1>
+          <span class="brand-english">AIRPORT DREAMZANIA · YEOLMAE 1</span>
+          <p>오늘도 멋진 직업 여행을 떠나요!</p>
+
+          <div class="departure-board" aria-label="오늘의 직업 출발 안내">
+            <div class="departure-board-title">
+              <span>오늘의 출발편</span>
+              <strong>NOW BOARDING</strong>
+            </div>
+            <div class="departure-board-jobs">
+              <span>🚒 소방관</span>
+              <span>💅 네일아티스트</span>
+              <span>🦴 고고학자</span>
+              <span>🎣 어부</span>
+            </div>
+          </div>
+
+          <button id="startButton" class="primary-button extra-large" type="button">
+            <span>여행 시작하기</span>
+            <span aria-hidden="true">🛫</span>
+          </button>
+          <button id="installButton" class="secondary-button hidden" type="button">홈 화면에 설치하기</button>
+        </div>
+      </section>
+
+      <section id="jobsScreen" class="screen" data-screen="jobs">
+        <div class="section-heading">
+          <span class="eyebrow">DEPARTURE GATE</span>
+          <h2>어떤 직업으로 떠날까요?</h2>
+          <p>체험하고 싶은 직업을 눌러주세요.</p>
+        </div>
+        <div id="jobGrid" class="job-grid"></div>
+      </section>
+
+      <section id="jobDetailScreen" class="screen" data-screen="job-detail">
+        <div id="jobDetailContent"></div>
+      </section>
+
+      <section id="checkinScreen" class="screen" data-screen="checkin">
+        <div class="checkin-layout">
+          <div class="section-heading compact">
+            <span class="eyebrow">CHECK-IN</span>
+            <h2 id="checkinTitle">이름을 알려주세요</h2>
+            <p id="checkinSubtitle">대기번호를 발급해드릴게요.</p>
+          </div>
+
+          <div class="checkin-tabs" role="tablist" aria-label="체크인 방법 선택">
+            <button id="nameTabButton" class="tab-button active" type="button" role="tab" aria-selected="true">내 이름 누르기</button>
+            <button id="qrTabButton" class="tab-button" type="button" role="tab" aria-selected="false">QR 체크인</button>
+          </div>
+
+          <div id="namePanel" class="checkin-panel active" role="tabpanel">
+            <form id="nameForm" class="name-form" autocomplete="off">
+              <label for="childName">내 이름이 안 보일 때만 입력해요</label>
+              <input id="childName" name="childName" type="text" maxlength="10" inputmode="text" placeholder="이름을 눌러 입력해요" required />
+              <button class="primary-button extra-large" type="submit">이 이름으로 체크인 🎫</button>
+            </form>
+            <div id="quickNames" class="quick-names" aria-label="빠른 이름 선택"></div>
+          </div>
+
+          <div id="qrPanel" class="checkin-panel" role="tabpanel">
+            <div class="qr-box">
+              <video id="qrVideo" playsinline muted></video>
+              <div class="qr-frame" aria-hidden="true"></div>
+              <p id="qrStatus">QR 카메라를 시작해 주세요.</p>
+              <button id="startQrButton" class="primary-button" type="button">QR 카메라 시작</button>
+              <button id="stopQrButton" class="secondary-button hidden" type="button">카메라 끄기</button>
+            </div>
+          </div>
+
+          <button id="backToJobButton" class="text-button" type="button">← 직업 화면으로 돌아가기</button>
+        </div>
+      </section>
+
+      <section id="ticketScreen" class="screen" data-screen="ticket">
+        <div class="ticket-stage">
+          <div id="ticketCard" class="boarding-pass">
+            <div class="ticket-topline">
+              <span>BOARDING PASS</span>
+              <span id="ticketJobCode">FIRE</span>
+            </div>
+            <div class="ticket-main">
+              <div>
+                <span class="ticket-label">직업</span>
+                <strong id="ticketJobName">소방관</strong>
+              </div>
+              <div>
+                <span class="ticket-label">이름</span>
+                <strong id="ticketName">김서영</strong>
+              </div>
+              <div class="ticket-number-wrap">
+                <span class="ticket-label">대기번호</span>
+                <strong id="ticketNumber">6</strong>
+              </div>
+            </div>
+            <div class="ticket-footer">
+              <span>GATE <strong id="ticketGate">A1</strong></span>
+              <span>조금만 기다려 주세요!</span>
+            </div>
+          </div>
+          <div class="celebration" aria-hidden="true">🎉 ✨ 🎈 ✨ 🎉</div>
+          <h2>대기번호가 발급되었어요!</h2>
+          <p id="ticketWaitMessage">현재 1명이 기다리고 있어요.</p>
+          <div class="button-row">
+            <button id="ticketJobButton" class="primary-button" type="button">대기 현황 보기</button>
+            <button id="ticketOtherJobButton" class="secondary-button" type="button">다른 직업 보기</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="completeScreen" class="screen" data-screen="complete">
+        <div class="complete-card glass-card">
+          <div class="complete-icon">🏆</div>
+          <h2>체험 완료!</h2>
+          <p id="completeMessage">멋진 직업 체험을 마쳤어요.</p>
+          <div class="confetti" aria-hidden="true">
+            <span>🎊</span><span>⭐</span><span>🎉</span><span>✨</span><span>🎈</span>
+          </div>
+          <button id="nextJobButton" class="primary-button extra-large" type="button">다음 직업 체험하기 ✈️</button>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="assertive"></div>
+  </div>
+
+  <dialog id="adminLoginDialog" class="app-dialog">
+    <form id="adminLoginForm" method="dialog" class="dialog-card">
+      <button class="dialog-close" value="cancel" aria-label="닫기">✕</button>
+      <div class="dialog-icon">🔐</div>
+      <h2>관리자 모드</h2>
+      <p>비밀번호를 입력해 주세요.</p>
+      <input id="adminPassword" type="password" inputmode="numeric" maxlength="8" placeholder="비밀번호" required />
+      <button id="adminLoginSubmit" class="primary-button" value="default" type="submit">관리자 모드 열기</button>
+      <p class="helper-text">초기 비밀번호: 1234</p>
+    </form>
+  </dialog>
+
+  <dialog id="adminPanelDialog" class="app-dialog wide-dialog">
+    <div class="dialog-card admin-card">
+      <button id="closeAdminPanel" class="dialog-close" type="button" aria-label="닫기">✕</button>
+      <div class="admin-header">
+        <div>
+          <span class="eyebrow">CONTROL TOWER</span>
+          <h2>관리자 관제실</h2>
+        </div>
+        <button id="changePasswordButton" class="small-button" type="button">비밀번호 변경</button>
+      </div>
+      <div id="adminJobTabs" class="admin-job-tabs"></div>
+      <div id="adminJobPanel" class="admin-job-panel"></div>
+    </div>
+  </dialog>
+
+  <dialog id="confirmDialog" class="app-dialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-icon">⚠️</div>
+      <h2 id="confirmTitle">확인해 주세요</h2>
+      <p id="confirmMessage">정말 진행할까요?</p>
+      <div class="button-row">
+        <button id="confirmCancelButton" class="secondary-button" value="cancel">취소</button>
+        <button id="confirmOkButton" class="danger-button" value="confirm">확인</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
