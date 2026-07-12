@@ -1427,3 +1427,80 @@ body {
     width: 100%;
   }
 }
+
+
+
+/* V3.2 - 대기 안내판 5명 표시 */
+.queue-board {
+  min-height: 0;
+}
+
+.queue-list {
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.queue-item {
+  min-height: 40px;
+  padding: 5px 8px;
+}
+
+.queue-item-number {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.queue-item-name {
+  font-size: 15px;
+}
+
+.queue-item-status {
+  font-size: 11px;
+}
+
+@media (orientation: landscape) and (min-width: 700px) {
+  .queue-list {
+    max-height: 205px;
+  }
+
+  .queue-item {
+    min-height: 37px;
+    padding-block: 4px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .queue-list {
+    max-height: 225px;
+  }
+}
+
+@media (max-width: 600px) {
+  .queue-list {
+    max-height: 200px;
+  }
+
+  .queue-item {
+    min-height: 36px;
+    padding: 4px 7px;
+  }
+
+  .queue-item-number {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-height: 760px) {
+  .queue-list {
+    max-height: 185px;
+  }
+
+  .queue-item {
+    min-height: 34px;
+    padding-block: 3px;
+  }
+}
